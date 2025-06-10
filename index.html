@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thakon Kawinmethawat</title>
+    <link rel="icon" href="favicon-alien.png" type="image/png" />
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-brand">Thakon Kawinmethawat</div>
+        <button class="menu-toggle" id="menu-toggle">&#9776;</button>
+        <ul class="navbar-menu" id="navbar-menu">
+          <li><a href="#" data-page="/contents/me.html">Me</a></li>
+          <li><a href="#" data-page="/contents/publications.html">Publications</a></li>
+          <li><a href="#" data-page="/contents/awards.html">Awards</a></li>
+          <li><a href="#" data-page="/contents/resume.html">Resume</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id="content" style="padding: 1rem"></div>
+
+    <script>
+      const toggleBtn = document.getElementById("menu-toggle");
+      const menu = document.getElementById("navbar-menu");
+      const content = document.getElementById("content");
+      const links = menu.querySelectorAll("a[data-page]");
+
+      const loadPage = (link) => {
+        links.forEach((a) => a.classList.remove("active"));
+        link.classList.add("active");
+        menu.classList.remove("show");
+
+        fetch(link.dataset.page)
+          .then((res) =>
+            res.ok
+              ? res.text()
+              : Promise.reject("not found: " + link.dataset.page)
+          )
+          .then((html) => (content.innerHTML = html))
+          .catch(
+            (err) =>
+              (content.innerHTML = `<p style="color:red;">content is invalid: ${err}</p>`)
+          );
+      };
+
+      toggleBtn.onclick = () => menu.classList.toggle("show");
+      links.forEach(
+        (link) =>
+          (link.onclick = (e) => {
+            e.preventDefault();
+            loadPage(link);
+          })
+      );
+
+      window.addEventListener("DOMContentLoaded", () => loadPage(links[0]));
+    </script>
+  </body>
+</html>
